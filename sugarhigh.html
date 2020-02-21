@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sugar high</title>
+  </head>
+  <body>
+    
+    <script>
+      const candyArray = [33, 20, 12, 19, 29];
+      const sugarHighThreshold = 33;
+
+      //   const candyArray = [62, 65, 100];
+      //   const sugarHighThreshold = 8;
+
+      //   const candyArray = [16, 39, 67,16,38,71];
+      //   const sugarHighThreshold = 17;
+
+      //   const candyArray = [16, 3, 14, 17, 11];
+      //   const sugarHighThreshold = 99;
+
+      const combinations = [];// array of objects {sugarIntake-sugar sum of candies in combinationArray , combinationArray-array of candy indices}
+
+      for (let i = 0; i < candyArray.length; i++) {
+        //if sugar of a candy is above sugarHighThreshold(maximum sugar intake), that candy can't be eaten
+        if (candyArray[i] > sugarHighThreshold) continue;
+
+        const newCombinations = []; // in this array we will save all new combinations
+
+        //we will go through all the combinations and try to add new candy to them if posible
+        combinations.forEach(combo => {
+          // if adding a new candy to combination is posible, we will create a copy of that combination and add a new candy to it
+          
+          if (combo.sugarIntake + candyArray[i] <= sugarHighThreshold) {
+            const newCombo = {
+              sugarIntake: combo.sugarIntake + candyArray[i],
+              combinationArray: [...combo.combinationArray, i]
+            };
+            newCombinations.push(newCombo);
+          }
+        });
+
+        //We want't to create a combination with only candy candyArray[i], so we can check if there are better combination which start from that candy
+        const soloCandyCombination = {
+          sugarIntake: candyArray[i],
+          combinationArray: [i]
+        };
+        newCombinations.push(soloCandyCombination);
+
+        //add newCombinations to all combinations
+        Array.prototype.push.apply(combinations, newCombinations);
+      }
+
+      if (combinations.length === 0) {
+        console.log(combinations);
+      } else {
+        let bestCombination = combinations[0];
+        combinations.forEach(combo => {
+          if (
+            combo.combinationArray.length >
+            bestCombination.combinationArray.length
+          ) {
+            // combination has more candies, which means this commbination is better
+            bestCombination = combo;
+          } else if (
+            combo.combinationArray.length ===
+            bestCombination.combinationArray.length
+          ) {
+            //combination has the same number of candies as the best combination, which means that we will have to see which of them has less suhar in total
+            if (combo.sugarIntake < bestCombination.sugarIntake) {
+              bestCombination = combo;
+            }
+          }
+        });
+
+        console.log(bestCombination.combinationArray);
+      }
+    </script>
+  </body>
+</html>
